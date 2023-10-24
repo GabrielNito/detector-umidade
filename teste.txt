@@ -5,10 +5,12 @@
 const char* ssid = "teste";
 const char* password = "12345678";
 const int arduinoDataPin = 0;
-char* resultado;
+String resultado;
 // 
 int valor;
+
 ESP8266WebServer server(80);
+
 void setup() {
   Serial.begin(115200);
   // 
@@ -18,30 +20,33 @@ void setup() {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(250);
-    Serial.flush()
+    Serial.flush();
     Serial.println("Conectando ao WiFi... | ");
     delay(250);
-    Serial.flush()
+    Serial.flush();
     Serial.println("Conectando ao WiFi... / ");
     delay(250);
-    Serial.flush()
+    Serial.flush();
     Serial.println("Conectando ao WiFi... - ");
     delay(250);
-    Serial.flush()
-    Serial.println("Conectando ao WiFi... \ ");
+    Serial.flush();
+//    Serial.println("Conectando ao WiFi... \ ");
   }
   Serial.println("Conectado ao WiFi");
   Serial.print("Endereço IP do ESP8266: ");
   Serial.println(WiFi.localIP());
   server.on("/", HTTP_GET, [](){
     while (Serial.available()) {
-      String response = "<html lang='en'><head><style>p{font-size: 5rem}</style></head><body><p id='status'></p><script>const p=document.getElementById('status');function myLoop(){ setTimeout(function(){p.innerText=", resultado, ";myLoop();},1000);};myLoop();</script></body></html>";
+      String response = "<html lang='en'><head><style>p{font-size: 5rem}</style></head><body><p id='status'></p><script>const p=document.getElementById('status');function myLoop(){ setTimeout(function(){p.innerText="; 
+      response += resultado;
+      response += ";myLoop();},1000);};myLoop();</script></body></html>";
     server.send(200, "text/html", response);
-  });
+    }
   server.begin();
+  });
 };
 void loop() {
-  valor = analogRead(sinal);
+//  valor = analogRead(sinal);
   if (valor > 0 && valor < 500)
   {
     Serial.println(" Status: Solo umido");
@@ -49,12 +54,12 @@ void loop() {
   };
   if (valor > 400 && valor < 800)
   {
-    Serial.println(" Status: Umidade moderada");
+    Serial.println("Status: Umidade moderada");
     resultado = "Status: Umidade moderada";
   };
   if (valor > 800 && valor < 1024)
   {
-    Serial.println(" Status: Solo seco");
+    Serial.println("Status: Solo seco");
     resultado = "Status: Solo seco";
   };
   delay(500);
